@@ -3,11 +3,12 @@ the game has the plot
 of the person walking the Lviv streets
 and having different adventures on the way
 """
-from cmath import phase
-from xml.dom import ValidationErr
-import lviv_travel as travel
 import random
 import sys
+
+class Failure(Exception):
+    "the failure of the player"
+    pass
 
 class Location:
     "class for the city locations"
@@ -31,6 +32,10 @@ class Location:
         "sets the enemy in the location"
         self.enemy = enemy
     
+    def set_friend(self, friend):
+        "sets the friend in the location"
+        self.friend = friend
+    
     def set_item(self, item):
         "sets the item in the location"
         self.item = item
@@ -44,8 +49,10 @@ class Location:
             print(f"The distance to {self.locations_near[key].name} is {key}")
     
     def get_character(self):
-        "gets the enemy"
-        return self.enemy
+        "gets the character"
+        if self.enemy:
+            return self.enemy
+        return self.friend
     
     def get_item(self):
         "gets the item"
@@ -112,9 +119,10 @@ class Enemy(Character):
         phrases = list(random.choices(phrase_ls, k=3))
         for num in range(1,4):
             print(f"{num}.  -  {phrases[num-1]}")
-
-    def get_reaction(self):
-        "get the enemy's reaction"
+        answer = input('Please, choose your answer, enter 1, 2 or 3:')
+        if answer not in ['1', '2', '3']:
+            print('Since you did not answer, the enemy just laughed and went away')
+            return
         phrase_ls = [f"There was no reaction to your words at all",
         f"The person seemed irritated",
         f"The person seemed distracted and hardly reacted to your words",
@@ -149,10 +157,11 @@ class Criminal(AgressivetEnemy):
         arrived_in_time = bool(random.getrandbits(1))
         if arrived_in_time:
             print('The police arrived on time and saved you from the conflict')
+            return True
         else:
             print("The criminal's reaction was much quicker than that of a police")
             print('Unfortunatelly for you, the criminal had the deadly weapons, and you got killed immediately')
-            raise ValidationErr
+            return False
     
     def fight(self, tool):
         "fight with the criminal"
@@ -177,7 +186,7 @@ class Friend(Character):
         self.specgreet = phrase
         self.conv = phrase + '\n' + self.conv
     
-    def talk_about_life(self):
+    def talk(self):
         "talk about life with a friend"
         print('You have talked and talked \
 with your friend')
@@ -214,7 +223,6 @@ class BestFriend(Friend):
         print("Your best friend swore this secret will remain a secret!")
 
 
-
 class Item:
     "class for items"
     def __init__(self, name, descr=None):
@@ -241,6 +249,40 @@ class Item:
     def get_name(self):
         "returns the name of the item"
         return self.name
+    
+    def take_possibility(self):
+        "check if you can take item"
+        return True
+
+class ActivationItem(Item):
+    "item that can be activated with another item"
+    def __init__(self, name, descr=None, activation=None, prize=None, final=False):
+        super().__init__(name, descr)
+        self.activation = activation
+        self.prize = prize
+        self.final = final
+
+    def activate(self, key_item):
+        "activate the item"
+        print(f'Trying to use {key_item.name} on {self.name}...')
+        if self.final is True:
+            if key_item.name == self.activation.name:
+                print('You successfully completed the quest!')
+                print('Congratulations!')
+                return 'end'
+
+        if key_item.name == self.activation.name:
+            print('Used successfully!')
+            print(f'You received the {self.activation.name}')
+            return self.prize
+        else:
+            print('The key item does not fit, try something else')
+            return None
+            
+    def take_possibility(self):
+        "see if you can take the item"
+        print('You can not take this type of item')
+        return False
 
 
 class Protocol:
@@ -258,5 +300,4 @@ class Protocol:
         "deactivated the protocol mode"
         sys.stdout = self.old_stdout
         self.file.close()
-
 
