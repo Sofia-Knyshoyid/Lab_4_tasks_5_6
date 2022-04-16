@@ -26,6 +26,7 @@ However, more complex hierarchy of these classes is written.
 For example, the branch of Character - Enemy - Agressiveenemy - Criminal
 gets more and more dangerous for each stage of the child class.
 Some ideas in the Item class are altered, such as the circumstances the person
-can find them.
+can find them. Activation items are added - they can be activated with a specific item (the chest - the code, the door - the key etc).
+This logic is used to end the game: the final activation item (in this main module, the door) congratulates the player and ends the game.
 Some additional functionality is added to the data scheme module that increases
 the variants of plot development (characters' reactions, special actions with the specific hostile/friendly characters etc).
