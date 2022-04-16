@@ -2,10 +2,6 @@
 the main module
 of the Lviv traveller game
 """
-"""
-the main module
-of the Lviv traveller game
-"""
 import lviv_travel as lviv
 Stryyska = lviv.Location('Stryyska street', 'The noisy and broad street. There are many people here right now.')
 Kozelnytska = lviv.Location('Kozelnytska street', 'It is quite cozy here, and your journey becomes much easier.')
