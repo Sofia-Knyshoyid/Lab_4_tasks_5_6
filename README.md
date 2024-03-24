@@ -1,4 +1,5 @@
-# Lab 4, tasks 5 and 6
+# Text_Game
+tasks 5 and 6
 
 ---Task 5---
 there are two modules for this task:
